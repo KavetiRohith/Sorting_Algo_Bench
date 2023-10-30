@@ -364,10 +364,10 @@ void bench_individual_algorithms()
     map<string, vector<pair<int, double>>> durations;
     bench_individual_algorithms_helper(durations);
 
+    plt::figure_size(1280, 720);
+
     for (const auto &itr : durations)
     {
-        plt::figure_size(1280, 720);
-
         string algorithm = itr.first;
         auto size_duration_pairs = itr.second;
 
@@ -380,13 +380,16 @@ void bench_individual_algorithms()
             times.push_back(size_duration_pair.second);
         }
 
-        plt::plot(sizes, times);
-        plt::ylabel("Time Taken");
-        plt::xlabel("Array Size");
-
-        // Save the image (file format is determined by the extension)
-        plt::save("./Out-" + algorithm + ".jpg");
+        plt::named_plot(algorithm, sizes, times);
+        plt::xticks(sizes);
     }
+
+    plt::ylabel("Time Taken");
+    plt::xlabel("Array Size");
+    plt::legend();
+
+    // Save the image (file format is determined by the extension)
+    plt::save("./Out-sizes.jpg");
 }
 
 int main()

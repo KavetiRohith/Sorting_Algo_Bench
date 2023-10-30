@@ -14,7 +14,8 @@
 
 ## Sorting Algorithm Time Complexities
 
-![Sorting Algorithms](out.jpg)
+![Sorting Algorithms Comparision with an array of size 100](Out.jpg)
+![Sorting Algorithms Comparision with multiple array sizes](Out-sizes.jpg)
 
 ### Bubble Sort
 

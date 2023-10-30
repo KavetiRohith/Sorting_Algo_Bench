@@ -9,3 +9,5 @@ RUN g++ sorting_algorithms.cpp -std=c++11 -DWITHOUT_NUMPY -I /usr/local/include/
 
 FROM scratch AS export-stage
 COPY --from=RUN_STAGE out.jpg .
+COPY --from=RUN_STAGE Out-sizes.jpg .
+
