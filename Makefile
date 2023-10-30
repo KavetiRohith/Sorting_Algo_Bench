@@ -5,8 +5,8 @@ TARGET = sorting_algorithms
 
 all: $(TARGET)
 
-$(TARGET): sorting_algorithms.cpp
-	$(CXX) sorting_algorithms.cpp $(CXXFLAGS) $(LDFLAGS) -o $(TARGET)
+$(TARGET): main.cpp
+	$(CXX) main.cpp $(CXXFLAGS) $(LDFLAGS) -o $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)

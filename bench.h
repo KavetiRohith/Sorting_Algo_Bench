@@ -1,11 +1,15 @@
-#include <iostream>
 #include <functional>
 #include <vector>
 #include <chrono>
 #include <map>
 #include <unordered_set>
 #include <random>
+
+#include "sorting_algorithms.h"
 #include "matplotlib-cpp/matplotlibcpp.h"
+
+#define PRINT_GENERATED_ARRAYS 0
+
 using namespace std;
 
 namespace plt = matplotlibcpp;
@@ -13,203 +17,6 @@ namespace plt = matplotlibcpp;
 const int BENCH_ITERATIONS = 10;
 const int RAND_GEN_LOW = 0;
 const int RAND_GEN_HIGH = 50000;
-
-void selectionSort(int arr[], int n)
-{
-    int i = -1; // i is keeping track of the start of the sorted array
-    while (i < n - 1)
-    {
-        int bestMinIndexSoFar = i + 1;
-        int j = i + 2;
-        while (j < n)
-        {
-            if (arr[j] < arr[bestMinIndexSoFar])
-            {
-                bestMinIndexSoFar = j;
-            }
-            j = j + 1;
-        }
-        // j = n
-        int temp = arr[bestMinIndexSoFar];
-        arr[bestMinIndexSoFar] = arr[i + 1];
-        arr[i + 1] = temp;
-        i++;
-    }
-    // i=n-1
-}
-
-void insertionSort(int arr[], int n)
-{
-    int i = 1;
-    while (i < n)
-    {
-        int key = arr[i];
-        int j = i - 1;
-        while (j >= 0)
-        {
-            if (arr[j] > key)
-            {
-                arr[j + 1] = arr[j];
-                j = j - 1;
-            }
-            else
-            {
-                break;
-            }
-        }
-        arr[j + 1] = key;
-        // j=-1;
-        i++;
-    }
-    // i=n
-}
-
-// sliding window of size 2
-void bubbleSort(int arr[], int size)
-{
-    int i = size;
-    bool isSwapped = false;
-    while (i > 0)
-    {
-        int j = 0;
-        while (j < i - 1)
-        {
-            if (arr[j] > arr[j + 1])
-            {
-                swap(arr[j], arr[j + 1]);
-                isSwapped = true;
-            }
-
-            j++;
-        }
-        i--;
-
-        if (!isSwapped)
-        {
-            return;
-        }
-    }
-}
-
-int genPivotAndRearrange(int arr[], int low, int high)
-{
-    int pivotIndex = rand() % (high - low + 1);
-    int pivot = arr[pivotIndex + low];
-
-    int j = low;
-    int k = high + 1;
-    int i = low;
-
-    while (j < k)
-    {
-        if (arr[j] == pivot)
-        {
-            j++;
-        }
-        else if (arr[j] < pivot)
-        {
-            swap(arr[i], arr[j]);
-            i++;
-            j++;
-        }
-        else
-        {
-            swap(arr[k - 1], arr[j]);
-            k--;
-        }
-    }
-
-    return i;
-}
-
-void quicksort(int arr[], int low, int high)
-{
-    if (low < high)
-    {
-        int pivot = genPivotAndRearrange(arr, low, high);
-        quicksort(arr, low, pivot - 1);
-        quicksort(arr, pivot + 1, high);
-    }
-}
-
-void quickSort(int arr[], int size)
-{
-    quicksort(arr, 0, size - 1);
-}
-
-void Merge(int arr[], int l[], int lsize, int r[], int rsize)
-{
-    int i = 0, j = 0, k = 0;
-    while (i < lsize && j < rsize)
-    {
-        if (l[i] <= r[j])
-        {
-            arr[k] = l[i];
-            k++;
-            i++;
-        }
-        else
-        {
-            arr[k] = r[j];
-            j++;
-            k++;
-        }
-    }
-    while (i < lsize)
-    {
-        arr[k] = l[i];
-        i++;
-        k++;
-    }
-    while (j < rsize)
-    {
-        arr[k] = r[j];
-        j++;
-        k++;
-    }
-}
-
-void MergeSort(int arr[], int size)
-{
-    if (size <= 1)
-        return;
-    int mid = size / 2;
-    int l[mid], r[size - mid];
-    for (int i = 0; i < mid; i++)
-    {
-        l[i] = arr[i];
-    }
-    for (int i = mid; i < size; i++)
-    {
-        r[i - mid] = arr[i];
-    }
-    MergeSort(l, mid);
-    MergeSort(r, size - mid);
-    Merge(arr, l, mid, r, size - mid);
-}
-
-void printArray(int arr[], int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        cout << arr[i] << ",";
-    }
-    cout << endl
-         << endl;
-}
-
-bool isSorted(int arr[], int size)
-{
-    for (int i = 0; i < size - 1; i++)
-    {
-        if (arr[i] > arr[i + 1])
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 double bench_helper(int arr[], int size, std::function<void(int[], int)> sorter)
 {
@@ -292,6 +99,11 @@ void genRandom(int arr[], size_t size)
     {
         arr[i++] = num;
     }
+#if PRINT_GENERATED_ARRAYS
+    cout << "genRandom Array: "
+         << "size: " << size << endl;
+    printArray(arr, size);
+#endif
 }
 
 void bench_cases()
@@ -329,7 +141,7 @@ void bench_cases()
     plt::save("./Out.jpg");
 }
 
-void bench_individual_algorithms_helper(map<string, vector<pair<int, double>>> &durations)
+void bench_algorithms_variable_array_sizes(map<string, vector<pair<int, double>>> &durations)
 {
     durations["BubbleSort"] = {};
     durations["MergeSort"] = {};
@@ -359,10 +171,10 @@ void bench_individual_algorithms_helper(map<string, vector<pair<int, double>>> &
     }
 }
 
-void bench_individual_algorithms()
+void bench_algorithms_variable_array_sizes()
 {
     map<string, vector<pair<int, double>>> durations;
-    bench_individual_algorithms_helper(durations);
+    bench_algorithms_variable_array_sizes(durations);
 
     plt::figure_size(1280, 720);
 
@@ -390,11 +202,4 @@ void bench_individual_algorithms()
 
     // Save the image (file format is determined by the extension)
     plt::save("./Out-sizes.jpg");
-}
-
-int main()
-{
-    bench_cases();
-    bench_individual_algorithms();
-    return 0;
 }
