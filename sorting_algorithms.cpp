@@ -2,6 +2,7 @@
 #include <functional>
 #include <vector>
 #include <chrono>
+#include <map>
 #include <unordered_set>
 #include <random>
 #include "matplotlib-cpp/matplotlibcpp.h"
@@ -9,10 +10,9 @@ using namespace std;
 
 namespace plt = matplotlibcpp;
 
-const int BENCH_ITERATIONS = 100;
-const int ARRAY_SIZE = 100;
-const int RAND_GEN_LOW = -500000;
-const int RAND_GEN_HIGH = 500000;
+const int BENCH_ITERATIONS = 10;
+const int RAND_GEN_LOW = 0;
+const int RAND_GEN_HIGH = 50000;
 
 void selectionSort(int arr[], int n)
 {
@@ -211,7 +211,7 @@ bool isSorted(int arr[], int size)
     return true;
 }
 
-double bench(int arr[], int size, std::function<void(int[], int)> sorter)
+double bench_helper(int arr[], int size, std::function<void(int[], int)> sorter)
 {
     double duration_accumulator;
 
@@ -222,9 +222,17 @@ double bench(int arr[], int size, std::function<void(int[], int)> sorter)
         {
             arr_copy[i] = arr[i];
         }
+
         auto start = chrono::high_resolution_clock::now();
         sorter(arr_copy, size);
         auto end = chrono::high_resolution_clock::now();
+
+        auto isSortingAlgorithmWorking = isSorted(arr_copy, size);
+        if (!isSortingAlgorithmWorking)
+        {
+            cout << "PANIC !!!";
+            exit(1);
+        }
 
         duration_accumulator += chrono::duration_cast<chrono::duration<double>>(end - start).count();
     }
@@ -232,15 +240,12 @@ double bench(int arr[], int size, std::function<void(int[], int)> sorter)
     return duration_accumulator / BENCH_ITERATIONS;
 }
 
-void bencher(string algorithm_name, std::function<void(int[], int)> sorter, int arr[], int size, vector<pair<string, array<double, 3>>> &durations_vec)
+void bench_cases_helper(string algorithm_name, std::function<void(int[], int)> sorter, int arr[], int size, vector<pair<string, array<double, 3>>> &durations_vec)
 {
     array<double, 3> durations;
 
-    // cout << algorithm_name << " Input Array: ";
-    // printArray(arr, size);
-
     // given input case
-    auto duration = bench(arr, size, sorter);
+    auto duration = bench_helper(arr, size, sorter);
     durations[0] = duration;
 
     // sorted array case
@@ -251,10 +256,7 @@ void bencher(string algorithm_name, std::function<void(int[], int)> sorter, int 
     }
     sorter(sorted_arr, size);
 
-    // cout << algorithm_name << " sorted Array: ";
-    // printArray(sorted_arr, size);
-
-    duration = bench(sorted_arr, size, sorter);
+    duration = bench_helper(sorted_arr, size, sorter);
     durations[1] = duration;
 
     // reverse sorted array case
@@ -265,13 +267,10 @@ void bencher(string algorithm_name, std::function<void(int[], int)> sorter, int 
         reverse_sorted_arr[rev_index++] = sorted_arr[i];
     }
 
-    // cout << algorithm_name << " reverse sorted Array: ";
-    // printArray(reverse_sorted_arr, size);
-
-    duration = bench(reverse_sorted_arr, size, sorter);
+    duration = bench_helper(reverse_sorted_arr, size, sorter);
     durations[2] = duration;
 
-    durations_vec.push_back(make_pair(algorithm_name, durations));
+    durations_vec.push_back(make_pair(algorithm_name + "-" + to_string(size), durations));
 }
 
 void genRandom(int arr[], size_t size)
@@ -295,19 +294,19 @@ void genRandom(int arr[], size_t size)
     }
 }
 
-int main()
+void bench_cases()
 {
-
+    int ARRAY_SIZE = 100;
     int arr[ARRAY_SIZE];
     genRandom(arr, ARRAY_SIZE);
 
     vector<pair<string, array<double, 3>>> durations_vec;
 
-    bencher("Bubble Sort", bubbleSort, arr, ARRAY_SIZE, durations_vec);
-    bencher("Merge Sort", MergeSort, arr, ARRAY_SIZE, durations_vec);
-    bencher("Selection Sort", selectionSort, arr, ARRAY_SIZE, durations_vec);
-    bencher("Insertion Sort", insertionSort, arr, ARRAY_SIZE, durations_vec);
-    bencher("Quick Sort", quickSort, arr, ARRAY_SIZE, durations_vec);
+    bench_cases_helper("BubbleSort", bubbleSort, arr, ARRAY_SIZE, durations_vec);
+    bench_cases_helper("MergeSort", MergeSort, arr, ARRAY_SIZE, durations_vec);
+    bench_cases_helper("SelectionSort", selectionSort, arr, ARRAY_SIZE, durations_vec);
+    bench_cases_helper("InsertionSort", insertionSort, arr, ARRAY_SIZE, durations_vec);
+    bench_cases_helper("QuickSort", quickSort, arr, ARRAY_SIZE, durations_vec);
 
     plt::figure_size(1280, 720);
 
@@ -323,14 +322,76 @@ int main()
         plt::named_plot(durations.first, _cases, out);
     }
 
-    plt::legend();
     plt::ylabel("Time Taken");
-
     plt::legend();
 
     // Save the image (file format is determined by the extension)
-    plt::save("./out.jpg");
-    plt::show();
+    plt::save("./Out.jpg");
+}
 
+void bench_individual_algorithms_helper(map<string, vector<pair<int, double>>> &durations)
+{
+    durations["BubbleSort"] = {};
+    durations["MergeSort"] = {};
+    durations["SelectionSort"] = {};
+    durations["InsertionSort"] = {};
+    durations["QuickSort"] = {};
+
+    for (int arr_size = 500; arr_size <= 5000; arr_size += 500)
+    {
+        int arr[arr_size];
+        genRandom(arr, arr_size);
+
+        auto duration = bench_helper(arr, arr_size, bubbleSort);
+        durations["BubbleSort"].push_back(make_pair(arr_size, duration));
+
+        duration = bench_helper(arr, arr_size, MergeSort);
+        durations["MergeSort"].push_back(make_pair(arr_size, duration));
+
+        duration = bench_helper(arr, arr_size, selectionSort);
+        durations["SelectionSort"].push_back(make_pair(arr_size, duration));
+
+        duration = bench_helper(arr, arr_size, insertionSort);
+        durations["InsertionSort"].push_back(make_pair(arr_size, duration));
+
+        duration = bench_helper(arr, arr_size, quickSort);
+        durations["QuickSort"].push_back(make_pair(arr_size, duration));
+    }
+}
+
+void bench_individual_algorithms()
+{
+    map<string, vector<pair<int, double>>> durations;
+    bench_individual_algorithms_helper(durations);
+
+    for (const auto &itr : durations)
+    {
+        plt::figure_size(1280, 720);
+
+        string algorithm = itr.first;
+        auto size_duration_pairs = itr.second;
+
+        vector<int> sizes;
+        vector<double> times;
+
+        for (const auto &size_duration_pair : size_duration_pairs)
+        {
+            sizes.push_back(size_duration_pair.first);
+            times.push_back(size_duration_pair.second);
+        }
+
+        plt::plot(sizes, times);
+        plt::ylabel("Time Taken");
+        plt::xlabel("Array Size");
+
+        // Save the image (file format is determined by the extension)
+        plt::save("./Out-" + algorithm + ".jpg");
+    }
+}
+
+int main()
+{
+    bench_cases();
+    bench_individual_algorithms();
     return 0;
 }
