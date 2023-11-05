@@ -149,7 +149,7 @@ void bench_best_avg_worst_cases()
         plt::named_plot(durations.first, _cases, out);
     }
 
-    plt::ylabel("Time Taken");
+    plt::ylabel("Time Taken (seconds)");
     plt::legend();
 
     print_durations_best_avg_worst_cases(durations_vec);

@@ -1,10 +1,4 @@
 # How to run
-- **Docker**: if you have docker on your machine run
-
-```sh
-    make run-docker 
-```
-
 - **Ubuntu 22.04**
 ```sh
     make setup-ubuntu-focal # installs g++ python3 and python3-matplotlib packages
@@ -14,21 +8,21 @@
 
 # Sorting Algorithm Time Complexities
 
-## Sorting Algorithms Comparison when the given array is Unsorted, Sorted in Ascending Order and sorted in Descending Order
+### Sorting Algorithms Time taken(in seconds) Comparison when the given array is Unsorted, Sorted in Ascending Order and Sorted in Descending Order with an array of size 10000 containing random numbers
 
 
-![Sorting Algorithms Comparison with an array of size 10000](Out.jpg)
+![Sorting Algorithms Time taken(in seconds) Comparison with a array of size 10000](Out.jpg)
 
 
 | Sorting Algorithm(Array size: 10000)| Unsorted Array | Sorted Array (Asc) | Sorted Array (Desc) |
-|----------------------------|-------------------------|---------------------|---------------------|
-| MergeSort                  | 0.0017286               | 0.000758021         | 0.000797441         |
-| BubbleSort                 | 0.384094                | 0.00001744          | 0.405408            |
-| SelectionSort              | 0.0940289               | 0.0925798           | 0.0907413           |
-| InsertionSort              | 0.0498009               | 0.00002858          | 0.0998162           |
-| QuickSort (Random Pivot)   | 0.00208098              | 0.00159398          | 0.00164398          |
-| QuickSort (Median of Medians)| 0.00618445            | 0.00897851          | 0.00785229          |
-| QuickSort (First Element as Pivot)| 0.00185528       | 0.00864063          | 0.424509            |
+|----------------------------|--------------|--------------------|--------------------|
+| MergeSort                  | 0.00156972   | 0.000814442        | 0.000831642        |
+| BubbleSort                 | 0.395118     | 0.0000174          | 0.415203           |
+| SelectionSort              | 0.0960688    | 0.0971576         | 0.0937215          |
+| InsertionSort              | 0.0497988    | 0.00002786         | 0.101039           |
+| QuickSort (Random Pivot)   | 0.00209612   | 0.00159786         | 0.0016165          |
+| QuickSort (Median of Medians)| 0.0073482 | 0.00885023         | 0.00806218         |
+| QuickSort (First Element as Pivot)| 0.00182434 | 0.00855287  | 0.41885            |
 
 ### Bubble Sort
 
@@ -61,24 +55,23 @@
 - **Average Case**: The average-case time complexity of Merge Sort is O(n log n). This is because, on average, the algorithm divides the array into roughly log(n) levels of sub-arrays, and at each level, it performs n operations to merge the sub-arrays.
 **In practice the time difference due to comparisons becomes insignificant as can be seen from the above graph
 
-<!-- In practical applications, the best, worst, and average cases for sorting algorithms depend on various factors, such as the specific implementation and the characteristics of the input data. -->
 
-## Sorting Algorithms Comparison with unsorted arrays of multiple sizes.
+### Sorting Algorithms Time taken(in seconds) Comparison with unsorted arrays of multiple sizes containing random numbers
 
-![Sorting Algorithms Comparison with multiple array sizes](Out-sizes.jpg)
+![Sorting Algorithms Time taken(in seconds) Comparison with multiple array sizes](Out-sizes.jpg)
 
 | Array Size | BubbleSort | InsertionSort | MergeSort | QuickSort-FirstElementAsPivot | QuickSort-MedianOfMedians | QuickSort-RandomPivot | SelectionSort |
 |------------|------------|---------------|-----------|-----------------------------|--------------------------|-----------------------|--------------|
-| 1000       | 0.00365648 | 0.000555661   | 0.00014714 | 0.00014196                    | 0.000484261               | 0.00016538            | 0.00103854    |
-| 2000       | 0.0146845  | 0.00210354    | 0.00023872 | 0.00029538                    | 0.00114896                | 0.0003632             | 0.00398476    |
-| 3000       | 0.0312643  | 0.00456271    | 0.00034606 | 0.00046064                    | 0.00166602                | 0.000521401            | 0.00863605    |
-| 4000       | 0.0569199  | 0.00794495    | 0.000473841 | 0.000660821                   | 0.00226228                | 0.000733501            | 0.0150887     |
-| 5000       | 0.0929254  | 0.0128994    | 0.000612901 | 0.000913441                   | 0.00291344                | 0.000996901            | 0.0236315     |
-| 6000       | 0.135279   | 0.0178972    | 0.000747521 | 0.0011237                    | 0.00356168                | 0.0011492              | 0.0338499     |
-| 7000       | 0.180714   | 0.0240044    | 0.000915181 | 0.00211616                   | 0.00423959                | 0.00144734             | 0.0459197     |
-| 8000       | 0.23951    | 0.0315626    | 0.00102388 | 0.00140992                   | 0.00482687                | 0.00158842             | 0.0608777     |
-| 9000       | 0.308304   | 0.0403196    | 0.00115664 | 0.00167872                   | 0.00566543                | 0.00179116             | 0.0752637     |
-| 10000      | 0.37936    | 0.050862     | 0.00132892 | 0.00189074                   | 0.00645383                | 0.00223842             | 0.093946      |
+| 1000       | 0.00353063 | 0.000537021  | 0.000145  | 0.00014186                    | 0.000485461              | 0.00016576           | 0.00103414    |
+| 2000       | 0.0150297  | 0.00205924   | 0.000242981 | 0.000301221                   | 0.00102046               | 0.000344561           | 0.00381413    |
+| 3000       | 0.0328166  | 0.00492221   | 0.000344761 | 0.000502441                   | 0.00171066               | 0.000559641           | 0.0100133     |
+| 4000       | 0.0597726  | 0.00790258   | 0.000472201 | 0.000712581                   | 0.00219084               | 0.000773381           | 0.0150913     |
+| 5000       | 0.0954308  | 0.0128629    | 0.000629721 | 0.000884802                   | 0.00293433               | 0.00100306            | 0.0249843     |
+| 6000       | 0.140983   | 0.0186286    | 0.000944822 | 0.0010564                    | 0.00346695               | 0.00114328            | 0.0337484     |
+| 7000       | 0.19053    | 0.0254442    | 0.000872162 | 0.00132962                   | 0.00440549               | 0.00134946            | 0.0469624     |
+| 8000       | 0.247033   | 0.0318388    | 0.00148876  | 0.001412                     | 0.00486321               | 0.00158292            | 0.0604736     |
+| 9000       | 0.320001   | 0.0406818    | 0.0011816  | 0.0017195                    | 0.00553061               | 0.00178866            | 0.0772598     |
+| 10000      | 0.391965   | 0.0510277    | 0.00130014 | 0.00187294                   | 0.00629449               | 0.00201064            | 0.095597      |
 
 
 ### Bubble, Selection, and Insertion Sort
