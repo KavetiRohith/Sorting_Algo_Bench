@@ -5,8 +5,8 @@ TARGET = sorting_algorithms
 
 all: $(TARGET)
 
-$(TARGET): main.cpp
-	$(CXX) main.cpp $(CXXFLAGS) $(LDFLAGS) -o $(TARGET)
+$(TARGET): main.cpp bench.cpp sorting_algorithms.cpp bench.h sorting_algorithms.h
+	$(CXX) main.cpp bench.cpp sorting_algorithms.cpp $(CXXFLAGS) $(LDFLAGS) -o $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)
